@@ -6,5 +6,5 @@
  * then `npm link`
 #### usage
  * inside any directory
- * `tsvp int PLUGIN-NAME`
+ * `tsvp init PLUGIN-NAME`
  * `tsvp build` or `tsvp watch`
