@@ -1,11 +1,17 @@
 import { failure, successFile, success, info } from './messages';
 import { join, normalize } from 'path';
-import { writeFile, ensureFile } from 'fs-extra';
+import { writeFile, ensureFile, pathExists } from 'fs-extra';
 import { exec } from 'child_process';
 
 export async function Init(name: string) {
   if (name) {
     const getPath = (dir: string, fileName: string) => normalize(join(process.cwd(), name, dir, fileName));
+
+    if (await pathExists(getPath('', ''))) {
+      failure(`Folder ${name} Already Exists`);
+      return;
+    }
+
     try {
       const indexPath = getPath('src', 'index.ts');
       await ensureFile(indexPath);

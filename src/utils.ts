@@ -37,28 +37,6 @@ export function Walk(dir: string) {
   });
 }
 
-function read(dir: string) {
-  return new Promise<Buffer>((_resolve, reject) => {
-    readFile(dir, (err, data) => {
-      if (err) reject(err);
-      _resolve(data);
-    });
-  });
-}
-function write(dir: string, data: string) {
-  return new Promise<Buffer>((_resolve, reject) => {
-    outputFile(dir, data, err => {
-      if (err) reject(err);
-      _resolve();
-    });
-  });
-}
-function getPath(dir: string, newFolder: string) {
-  return relative('./', dir)
-    .replace(/^[.\w-]*\\/, `${newFolder}\\`)
-    .replace(/\.[\w]*$/, '');
-}
-
 export async function WriteToFile(path: string, msg: string | null) {
   const now = process.hrtime.bigint();
   const file = await read(path);
@@ -95,4 +73,26 @@ export function DeleteFile(path: string) {
       )
       .catch(() => console.log(chalk.yellowBright('DELETED FAIL')));
   }, 0);
+}
+
+function read(dir: string) {
+  return new Promise<Buffer>((_resolve, reject) => {
+    readFile(dir, (err, data) => {
+      if (err) reject(err);
+      _resolve(data);
+    });
+  });
+}
+function write(dir: string, data: string) {
+  return new Promise<Buffer>((_resolve, reject) => {
+    outputFile(dir, data, err => {
+      if (err) reject(err);
+      _resolve();
+    });
+  });
+}
+function getPath(dir: string, newFolder: string) {
+  return relative('./', dir)
+    .replace(/^[.\w-]*\\/, `${newFolder}\\`)
+    .replace(/\.[\w]*$/, '');
 }
