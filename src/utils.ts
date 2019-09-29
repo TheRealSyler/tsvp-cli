@@ -48,7 +48,7 @@ export async function WriteToFile(path: string, msg: string | null) {
   });
   const relativeOutPath = getPath(path, 'dist');
   if (transformed !== null && transformed.code !== undefined && transformed.code !== null) {
-    write(relativeOutPath.concat('.js'), transformed.code).catch((err: any) => console.log(err));
+    await write(relativeOutPath.concat('.js'), transformed.code).catch((err: any) => console.log(err));
   }
   if (msg !== null) {
     console.log(msg.replace('THE_END', ((process.hrtime.bigint() - now) / BigInt(1e6)).toString()));
@@ -64,14 +64,14 @@ export function DeleteFile(path: string) {
           chalk.red(`Deleted ${relativeOutPath.concat('.js')} - ${((process.hrtime.bigint() - now) / BigInt(1e6)).toString()} ms`)
         );
       })
-      .catch(() => console.log(chalk.yellowBright('DELETED FAIL')));
+      .catch(err => console.log(chalk.yellowBright('DELETED FAIL', err)));
     unlink(relativeOutPath.concat('.d.ts'))
       .then(() =>
         console.log(
           chalk.red(`Deleted ${relativeOutPath.concat('.d.ts')} - ${((process.hrtime.bigint() - now) / BigInt(1e6)).toString()} ms`)
         )
       )
-      .catch(() => console.log(chalk.yellowBright('DELETED FAIL')));
+      .catch(err => console.log(chalk.yellowBright('DELETED FAIL', err)));
   }, 0);
 }
 
@@ -92,7 +92,15 @@ function write(dir: string, data: string) {
   });
 }
 function getPath(dir: string, newFolder: string) {
-  return relative('./', dir)
-    .replace(/^[.\w-]*\\/, `${newFolder}\\`)
-    .replace(/\.[\w]*$/, '');
+  if (process.platform === 'linux') {
+    return relative('./', dir)
+      .replace(/^[.\w-]*[\/]/, `${newFolder}/`)
+      .replace(/\.[\w]*$/, '');
+  } else if (process.platform === 'win32') {
+    return relative('./', dir)
+      .replace(/^[.\w-]*[\\]/, `${newFolder}\\`)
+      .replace(/\.[\w]*$/, '');
+  } else {
+    throw console.log(chalk.red('Platform not Supported'));
+  }
 }

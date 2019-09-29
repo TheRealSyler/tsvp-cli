@@ -7,16 +7,21 @@ import { normalize, join } from 'path';
 
 export async function Watch() {
   exec('tsc -w', (err, stOut, stErr) => {
+    console.log('WATCH', stOut);
     if (err) console.log(err);
   });
 
   watch('src').on('all', async (type, path, stats) => {
     switch (type) {
       case 'change':
-        WriteToFile(path, chalk.green(`Updated ${path} - THE_END ms`));
+        if (path.endsWith('.ts')) {
+          WriteToFile(path, chalk.green(`Updated ${path} - THE_END ms`));
+        }
         break;
       case 'unlink':
-        DeleteFile(path);
+        if (path.endsWith('.ts')) {
+          DeleteFile(path);
+        }
         break;
     }
   });
