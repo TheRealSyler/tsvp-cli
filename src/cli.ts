@@ -19,29 +19,34 @@ class Start {
   private async run() {
     switch (this.args[0]) {
       case 'watch':
-      case '--w':
-      case '-w':
       case 'w':
         Watch();
         break;
       case 'build':
-      case '--b':
-      case '-b':
       case 'b':
         Build();
         break;
       case 'init':
-      case '--i':
-      case '-i':
       case 'i':
         Init(this.args[1]);
         break;
       case '-v':
+      case 'version':
         const file = await readFile('package.json');
-        console.log(chalk.green(`v${JSON.parse(file.toString()).version} Node: ${process.version}`));
+        console.log(chalk.green(`v${JSON.parse(file.toString()).version}`));
+        break;
+      case 'help':
+      case '--help':
+      case 'h':
+        console.log(
+          `  tsvp init PLUGIN-NAME    Initializes a new Typescript vue plugin
+  tsvp build               Builds the project.
+  tsvp watch               Builds on file changes.
+  tsvp -v                  Prints out the version of the package.`
+        );
         break;
       default:
-        failure('Error! No Command Given.');
+        failure('Error! Command is Invalid.');
         break;
     }
   }

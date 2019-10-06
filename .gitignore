@@ -2,3 +2,4 @@ node_modules
 dist
 .vscode
 tsconfig.tsbuildinfo
+tsvp-0.0.1.tgz
