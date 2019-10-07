@@ -41,14 +41,19 @@ export async function WriteToFile(path: string, msg: string | null) {
   const now = process.hrtime.bigint();
   const file = await read(path);
   const name = basename(path);
-  const transformed = transformSync(file.toString(), {
-    plugins: ['@babel/plugin-transform-typescript'],
-    filename: name,
-    minified: options.minified
-  });
   const relativeOutPath = getPath(path, 'dist');
-  if (transformed !== null && transformed.code !== undefined && transformed.code !== null) {
-    await write(relativeOutPath.concat('.js'), transformed.code).catch((err: any) => console.log(err));
+  if (path.endsWith('.ts')) {
+    const transformed = transformSync(file.toString(), {
+      plugins: ['@babel/plugin-transform-typescript'],
+      filename: name,
+      minified: options.minified
+    });
+
+    if (transformed !== null && transformed.code !== undefined && transformed.code !== null) {
+      await write(relativeOutPath.concat('.js'), transformed.code).catch((err: any) => console.log(err));
+    }
+  } else if (path.endsWith('.vue')) {
+    await write(relativeOutPath.concat('.vue'), file.toString()).catch((err: any) => console.log(err));
   }
   if (msg !== null) {
     console.log(msg.replace('THE_END', ((process.hrtime.bigint() - now) / BigInt(1e6)).toString()));
@@ -57,7 +62,7 @@ export async function WriteToFile(path: string, msg: string | null) {
 export function DeleteFile(path: string) {
   const now = process.hrtime.bigint();
   const relativeOutPath = getPath(path, 'dist');
-  setTimeout(() => {
+  if (path.endsWith('.ts')) {
     unlink(relativeOutPath.concat('.js'))
       .then(() => {
         console.log(
@@ -72,7 +77,15 @@ export function DeleteFile(path: string) {
         )
       )
       .catch(err => console.log(chalk.yellowBright('DELETED FAIL', err)));
-  }, 0);
+  } else if (path.endsWith('.vue')) {
+    unlink(relativeOutPath.concat('.vue'))
+      .then(() =>
+        console.log(
+          chalk.red(`Deleted ${relativeOutPath.concat('.vue')} - ${((process.hrtime.bigint() - now) / BigInt(1e6)).toString()} ms`)
+        )
+      )
+      .catch(err => console.log(chalk.yellowBright('DELETED FAIL', err)));
+  }
 }
 
 function read(dir: string) {
@@ -83,7 +96,7 @@ function read(dir: string) {
     });
   });
 }
-function write(dir: string, data: string) {
+export function write(dir: string, data: string) {
   return new Promise<Buffer>((_resolve, reject) => {
     outputFile(dir, data, err => {
       if (err) reject(err);

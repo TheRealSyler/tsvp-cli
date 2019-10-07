@@ -23,7 +23,7 @@ export async function Build() {
       for (let i = 0; i < filesPaths.length; i++) {
         WriteToFile(filesPaths[i], null);
       }
-      console.log(chalk.green(`Build Js          - Finished At: ${((process.hrtime.bigint() - now) / BigInt(1e6)).toString()} ms`));
+      console.log(chalk.green(`Build Files       - Finished At: ${((process.hrtime.bigint() - now) / BigInt(1e6)).toString()} ms`));
       if (canEnd) {
         end(now);
       } else {

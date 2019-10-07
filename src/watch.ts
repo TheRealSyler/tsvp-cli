@@ -14,12 +14,12 @@ export async function Watch() {
   watch('src').on('all', async (type, path, stats) => {
     switch (type) {
       case 'change':
-        if (path.endsWith('.ts')) {
+        if (path.endsWith('.ts') || path.endsWith('.vue')) {
           WriteToFile(path, chalk.green(`Updated ${path} - THE_END ms`));
         }
         break;
       case 'unlink':
-        if (path.endsWith('.ts')) {
+        if (path.endsWith('.ts') || path.endsWith('.vue')) {
           DeleteFile(path);
         }
         break;

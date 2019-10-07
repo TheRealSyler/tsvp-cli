@@ -5,6 +5,7 @@ import { Build } from './build';
 import { Init } from './init';
 import chalk from 'chalk';
 import { readFile } from 'fs-extra';
+import { GenerateFiles } from './generate';
 
 class Start {
   args: string[];
@@ -35,18 +36,22 @@ class Start {
         const file = await readFile('package.json');
         console.log(chalk.green(`v${JSON.parse(file.toString()).version}`));
         break;
+      default:
+        failure('Error! Command is Invalid.');
       case 'help':
       case '--help':
       case 'h':
         console.log(
-          `  tsvp init PLUGIN-NAME    Initializes a new Typescript vue plugin
-  tsvp build               Builds the project.
-  tsvp watch               Builds on file changes.
-  tsvp -v                  Prints out the version of the package.`
+          `  tsvp init PLUGIN-NAME      Initializes a new Typescript vue plugin
+  tsvp build                 Builds the project.
+  tsvp watch                 Builds on file changes.
+  tsvp g PATH or TYPE PATH   Creates new empty files.
+  tsvp -v                    Prints out the version of the package.`
         );
         break;
-      default:
-        failure('Error! Command is Invalid.');
+      case 'g':
+      case 'generate':
+        GenerateFiles(this.args);
         break;
     }
   }
